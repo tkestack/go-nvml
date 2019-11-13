@@ -5,3 +5,11 @@ This project is just a wrapper of nvml library. It provides the most of nvml fun
 includeing system and device queries. The prototype of each function can be
 
 found at http://docs.nvidia.com/deploy/nvml-api
+
+## Build
+
+To make the binary, just run:
+
+```bash
+make all
+```

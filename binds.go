@@ -1244,7 +1244,7 @@ func (h handle) DeviceGetProcessUtilization(maxProcess int, since time.Duration)
 
 func (h handle) DeviceGetSupportedEventTypes() ([]EventType, error) {
 	var supportedType C.ulonglong
-	r := C.nvmlDeviceGetSupportedEventTypes(h.dev, &supportedType)
+	r := C.nvmlDeviceGetSupportedEventTypes_dlib(h.dev, &supportedType)
 	if r != OP_SUCCESS {
 		return nil, errorString(r)
 	}

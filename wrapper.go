@@ -673,7 +673,6 @@ nvmlReturn_t NVML_DL(nvmlEventSetWait)(nvmlEventSet_t set, nvmlEventData_t *data
   CALL(nvmlEventSetWait, set, data, timeoutms);
 }
 */
-
 // #cgo CFLAGS: -I. -I /usr/local/cuda/include
 // #cgo LDFLAGS: -ldl -Wl,--unresolved-symbols=ignore-in-object-files
 import "C"

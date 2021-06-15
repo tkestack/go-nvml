@@ -64,7 +64,7 @@ const (
 	BRAND_COUNT
 )
 
-type handle struct{ dev C.nvmlDevice_t }
+type GpuHandle struct{ dev C.nvmlDevice_t }
 
 type BridgeChipInfo struct {
 	FwVersion uint
@@ -259,7 +259,7 @@ const (
 )
 
 type EventData struct {
-	Device handle
+	Device GpuHandle
 	Data   uint64
 	Types  []EventType
 }

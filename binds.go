@@ -89,13 +89,13 @@ func SystemGetProcessName(pid uint) (string, error) {
 	return C.GoString(&proc[0]), nil
 }
 
-func (h handle) DeviceClearCpuAffinity() error {
+func (h GpuHandle) DeviceClearCpuAffinity() error {
 	r := C.nvmlDeviceClearCpuAffinity_dlib(h.dev)
 
 	return errorString(r)
 }
 
-func (h handle) DeviceGetAPIRestriction(apiType RestrictedAPI) (bool, error) {
+func (h GpuHandle) DeviceGetAPIRestriction(apiType RestrictedAPI) (bool, error) {
 	var state C.nvmlEnableState_t
 
 	r := C.nvmlDeviceGetAPIRestriction_dlib(h.dev, apiType.convert(), &state)
@@ -107,7 +107,7 @@ func (h handle) DeviceGetAPIRestriction(apiType RestrictedAPI) (bool, error) {
 	return stateBool(state), nil
 }
 
-func (h handle) DeviceGetApplicationsClock(clockType ClockType) (uint, error) {
+func (h GpuHandle) DeviceGetApplicationsClock(clockType ClockType) (uint, error) {
 	var clockMHz C.uint
 
 	r := C.nvmlDeviceGetApplicationsClock_dlib(h.dev, clockType.convert(), &clockMHz)
@@ -118,7 +118,7 @@ func (h handle) DeviceGetApplicationsClock(clockType ClockType) (uint, error) {
 	return uint(clockMHz), nil
 }
 
-func (h handle) DeviceGetAutoBoostedClocksEnabled() (curState bool, defaultState bool, err error) {
+func (h GpuHandle) DeviceGetAutoBoostedClocksEnabled() (curState bool, defaultState bool, err error) {
 	var isEnabled, defaultEnabled C.nvmlEnableState_t
 
 	r := C.nvmlDeviceGetAutoBoostedClocksEnabled_dlib(h.dev, &isEnabled, &defaultEnabled)
@@ -130,7 +130,7 @@ func (h handle) DeviceGetAutoBoostedClocksEnabled() (curState bool, defaultState
 	return stateBool(isEnabled), stateBool(defaultEnabled), nil
 }
 
-func (h handle) DeviceGetBAR1MemoryInfo() (free uint64, used uint64, total uint64, err error) {
+func (h GpuHandle) DeviceGetBAR1MemoryInfo() (free uint64, used uint64, total uint64, err error) {
 	var bar1 C.nvmlBAR1Memory_t
 
 	r := C.nvmlDeviceGetBAR1MemoryInfo_dlib(h.dev, &bar1)
@@ -142,7 +142,7 @@ func (h handle) DeviceGetBAR1MemoryInfo() (free uint64, used uint64, total uint6
 	return uint64(bar1.bar1Free), uint64(bar1.bar1Used), uint64(bar1.bar1Total), nil
 }
 
-func (h handle) DeviceGetBoardId() (uint, error) {
+func (h GpuHandle) DeviceGetBoardId() (uint, error) {
 	var boardID C.uint
 
 	r := C.nvmlDeviceGetBoardId_dlib(h.dev, &boardID)
@@ -154,7 +154,7 @@ func (h handle) DeviceGetBoardId() (uint, error) {
 	return uint(boardID), nil
 }
 
-func (h handle) DeviceGetBrand() (BrandType, error) {
+func (h GpuHandle) DeviceGetBrand() (BrandType, error) {
 	var brand C.nvmlBrandType_t
 
 	r := C.nvmlDeviceGetBrand_dlib(h.dev, &brand)
@@ -166,7 +166,7 @@ func (h handle) DeviceGetBrand() (BrandType, error) {
 	return brandType(brand), nil
 }
 
-func (h handle) DeviceGetBridgeChipInfo() ([]*BridgeChipInfo, error) {
+func (h GpuHandle) DeviceGetBridgeChipInfo() ([]*BridgeChipInfo, error) {
 	var bridgeHierarchy C.nvmlBridgeChipHierarchy_t
 
 	r := C.nvmlDeviceGetBridgeChipInfo_dlib(h.dev, &bridgeHierarchy)
@@ -188,7 +188,7 @@ func (h handle) DeviceGetBridgeChipInfo() ([]*BridgeChipInfo, error) {
 	return bridgeInfo, nil
 }
 
-func (h handle) DeviceGetClockInfo(clockType ClockType) (uint, error) {
+func (h GpuHandle) DeviceGetClockInfo(clockType ClockType) (uint, error) {
 	var clockMHz C.uint
 
 	r := C.nvmlDeviceGetClockInfo_dlib(h.dev, clockType.convert(), &clockMHz)
@@ -200,7 +200,7 @@ func (h handle) DeviceGetClockInfo(clockType ClockType) (uint, error) {
 	return uint(clockMHz), nil
 }
 
-func (h handle) DeviceGetComputeMode() (ComputeMode, error) {
+func (h GpuHandle) DeviceGetComputeMode() (ComputeMode, error) {
 	var mode C.nvmlComputeMode_t
 
 	r := C.nvmlDeviceGetComputeMode_dlib(h.dev, &mode)
@@ -212,7 +212,7 @@ func (h handle) DeviceGetComputeMode() (ComputeMode, error) {
 	return computeModeType(mode), nil
 }
 
-func (h handle) DeviceGetComputeRunningProcesses(size int) ([]*ProcessInfo, error) {
+func (h GpuHandle) DeviceGetComputeRunningProcesses(size int) ([]*ProcessInfo, error) {
 	var procs = make([]C.nvmlProcessInfo_t, size)
 	var count = C.uint(size)
 
@@ -233,7 +233,7 @@ func (h handle) DeviceGetComputeRunningProcesses(size int) ([]*ProcessInfo, erro
 	return info, nil
 }
 
-func (h handle) DeviceGetCpuAffinity(size uint) ([]uint, error) {
+func (h GpuHandle) DeviceGetCpuAffinity(size uint) ([]uint, error) {
 	var d = make([]C.ulong, size)
 
 	r := C.nvmlDeviceGetCpuAffinity_dlib(h.dev, C.uint(size), &d[0])
@@ -283,7 +283,7 @@ func (h handle) DeviceGetCpuAffinity(size uint) ([]uint, error) {
 	return contains, nil
 }
 
-func (h handle) DeviceGetCurrPcieLinkGeneration() (uint, error) {
+func (h GpuHandle) DeviceGetCurrPcieLinkGeneration() (uint, error) {
 	var linkGen C.uint
 
 	r := C.nvmlDeviceGetCurrPcieLinkGeneration_dlib(h.dev, &linkGen)
@@ -295,7 +295,7 @@ func (h handle) DeviceGetCurrPcieLinkGeneration() (uint, error) {
 	return uint(linkGen), nil
 }
 
-func (h handle) DeviceGetCurrPcieLinkWidth() (uint, error) {
+func (h GpuHandle) DeviceGetCurrPcieLinkWidth() (uint, error) {
 	var width C.uint
 
 	r := C.nvmlDeviceGetCurrPcieLinkWidth_dlib(h.dev, &width)
@@ -307,7 +307,7 @@ func (h handle) DeviceGetCurrPcieLinkWidth() (uint, error) {
 	return uint(width), nil
 }
 
-func (h handle) DeviceGetCurrentClocksThrottleReasons() ([]ClocksThrottleReasons, error) {
+func (h GpuHandle) DeviceGetCurrentClocksThrottleReasons() ([]ClocksThrottleReasons, error) {
 	var reason C.ulonglong
 
 	r := C.nvmlDeviceGetCurrentClocksThrottleReasons_dlib(h.dev, &reason)
@@ -319,7 +319,7 @@ func (h handle) DeviceGetCurrentClocksThrottleReasons() ([]ClocksThrottleReasons
 	return clocksThrottleReasons(reason), nil
 }
 
-func (h handle) DeviceGetDecoderUtilization() (util uint, samplePeriod uint, err error) {
+func (h GpuHandle) DeviceGetDecoderUtilization() (util uint, samplePeriod uint, err error) {
 	var utilization, samplingPeriodUs C.uint
 
 	r := C.nvmlDeviceGetDecoderUtilization_dlib(h.dev, &utilization, &samplingPeriodUs)
@@ -331,7 +331,7 @@ func (h handle) DeviceGetDecoderUtilization() (util uint, samplePeriod uint, err
 	return uint(utilization), uint(samplingPeriodUs), nil
 }
 
-func (h handle) DeviceGetDefaultApplicationsClock(clockType ClockType) (uint, error) {
+func (h GpuHandle) DeviceGetDefaultApplicationsClock(clockType ClockType) (uint, error) {
 	var clockMHz C.uint
 
 	r := C.nvmlDeviceGetDefaultApplicationsClock_dlib(h.dev, clockType.convert(), &clockMHz)
@@ -343,7 +343,7 @@ func (h handle) DeviceGetDefaultApplicationsClock(clockType ClockType) (uint, er
 	return uint(clockMHz), nil
 }
 
-func (h handle) DeviceGetDetailedEccErrors(mt MemoryErrorType, ec EccCounterType) (*EccErrorCounts, error) {
+func (h GpuHandle) DeviceGetDetailedEccErrors(mt MemoryErrorType, ec EccCounterType) (*EccErrorCounts, error) {
 	var count C.nvmlEccErrorCounts_t
 
 	r := C.nvmlDeviceGetDetailedEccErrors_dlib(h.dev, mt.convert(), ec.convert(), &count)
@@ -360,7 +360,7 @@ func (h handle) DeviceGetDetailedEccErrors(mt MemoryErrorType, ec EccCounterType
 	}, nil
 }
 
-func (h handle) DeviceGetDisplayActive() (bool, error) {
+func (h GpuHandle) DeviceGetDisplayActive() (bool, error) {
 	var state C.nvmlEnableState_t
 
 	r := C.nvmlDeviceGetDisplayActive_dlib(h.dev, &state)
@@ -372,7 +372,7 @@ func (h handle) DeviceGetDisplayActive() (bool, error) {
 	return stateBool(state), nil
 }
 
-func (h handle) DeviceGetDisplayMode() (bool, error) {
+func (h GpuHandle) DeviceGetDisplayMode() (bool, error) {
 	var state C.nvmlEnableState_t
 
 	r := C.nvmlDeviceGetDisplayMode_dlib(h.dev, &state)
@@ -384,7 +384,7 @@ func (h handle) DeviceGetDisplayMode() (bool, error) {
 	return stateBool(state), nil
 }
 
-func (h handle) DeviceGetEccMode() (curMode bool, pendingMode bool, err error) {
+func (h GpuHandle) DeviceGetEccMode() (curMode bool, pendingMode bool, err error) {
 	var current, pending C.nvmlEnableState_t
 
 	r := C.nvmlDeviceGetEccMode_dlib(h.dev, &current, &pending)
@@ -396,7 +396,7 @@ func (h handle) DeviceGetEccMode() (curMode bool, pendingMode bool, err error) {
 	return stateBool(current), stateBool(pending), nil
 }
 
-func (h handle) DeviceGetEncoderUtilization() (util uint, samplePeriod uint, err error) {
+func (h GpuHandle) DeviceGetEncoderUtilization() (util uint, samplePeriod uint, err error) {
 	var utilization, samplingPeriodUs C.uint
 
 	r := C.nvmlDeviceGetEncoderUtilization_dlib(h.dev, &utilization, &samplingPeriodUs)
@@ -408,7 +408,7 @@ func (h handle) DeviceGetEncoderUtilization() (util uint, samplePeriod uint, err
 	return uint(utilization), uint(samplingPeriodUs), nil
 }
 
-func (h handle) DeviceGetEnforcedPowerLimit() (uint, error) {
+func (h GpuHandle) DeviceGetEnforcedPowerLimit() (uint, error) {
 	var limit C.uint
 
 	r := C.nvmlDeviceGetEnforcedPowerLimit_dlib(h.dev, &limit)
@@ -420,7 +420,7 @@ func (h handle) DeviceGetEnforcedPowerLimit() (uint, error) {
 	return uint(limit), nil
 }
 
-func (h handle) DeviceGetFanSpeed() (uint, error) {
+func (h GpuHandle) DeviceGetFanSpeed() (uint, error) {
 	var speed C.uint
 
 	r := C.nvmlDeviceGetFanSpeed_dlib(h.dev, &speed)
@@ -432,7 +432,7 @@ func (h handle) DeviceGetFanSpeed() (uint, error) {
 	return uint(speed), nil
 }
 
-func (h handle) DeviceGetGpuOperationMode() (curMode GpuOperationMode, pendingMode GpuOperationMode, err error) {
+func (h GpuHandle) DeviceGetGpuOperationMode() (curMode GpuOperationMode, pendingMode GpuOperationMode, err error) {
 	var current, pending C.nvmlGpuOperationMode_t
 
 	r := C.nvmlDeviceGetGpuOperationMode_dlib(h.dev, &current, &pending)
@@ -444,7 +444,7 @@ func (h handle) DeviceGetGpuOperationMode() (curMode GpuOperationMode, pendingMo
 	return gpuOperationMode(current), gpuOperationMode(pending), nil
 }
 
-func (h handle) GetGraphicsRunningProcesses(size int) ([]*ProcessInfo, error) {
+func (h GpuHandle) GetGraphicsRunningProcesses(size int) ([]*ProcessInfo, error) {
 	var procs = make([]C.nvmlProcessInfo_t, size)
 	var count = C.uint(size)
 
@@ -465,39 +465,39 @@ func (h handle) GetGraphicsRunningProcesses(size int) ([]*ProcessInfo, error) {
 	return info, nil
 }
 
-func DeviceGetHandleByIndex(idx uint) (handle, error) {
+func DeviceGetHandleByIndex(idx uint) (GpuHandle, error) {
 	var dev C.nvmlDevice_t
 
 	r := C.nvmlDeviceGetHandleByIndex_dlib(C.uint(idx), &dev)
 
-	return handle{dev}, errorString(r)
+	return GpuHandle{dev}, errorString(r)
 }
 
-func DeviceGetHandleByPciBusId(pciBusID string) (handle, error) {
+func DeviceGetHandleByPciBusId(pciBusID string) (GpuHandle, error) {
 	var dev C.nvmlDevice_t
 
 	r := C.nvmlDeviceGetHandleByPciBusId_dlib(C.CString(pciBusID), &dev)
 
-	return handle{dev}, errorString(r)
+	return GpuHandle{dev}, errorString(r)
 }
 
-func DeviceGetHandleBySerial(serial string) (handle, error) {
+func DeviceGetHandleBySerial(serial string) (GpuHandle, error) {
 	var dev C.nvmlDevice_t
 
 	r := C.nvmlDeviceGetHandleBySerial_dlib(C.CString(serial), &dev)
 
-	return handle{dev}, errorString(r)
+	return GpuHandle{dev}, errorString(r)
 }
 
-func DeviceGetHandleByUUID(uuid string) (handle, error) {
+func DeviceGetHandleByUUID(uuid string) (GpuHandle, error) {
 	var dev C.nvmlDevice_t
 
 	r := C.nvmlDeviceGetHandleByUUID_dlib(C.CString(uuid), &dev)
 
-	return handle{dev}, errorString(r)
+	return GpuHandle{dev}, errorString(r)
 }
 
-func (h handle) DeviceGetIndex() (uint, error) {
+func (h GpuHandle) DeviceGetIndex() (uint, error) {
 	var index C.uint
 
 	r := C.nvmlDeviceGetIndex_dlib(h.dev, &index)
@@ -509,7 +509,7 @@ func (h handle) DeviceGetIndex() (uint, error) {
 	return uint(index), nil
 }
 
-func (h handle) DeviceGetInforomConfigurationChecksum() (uint, error) {
+func (h GpuHandle) DeviceGetInforomConfigurationChecksum() (uint, error) {
 	var checksum C.uint
 
 	r := C.nvmlDeviceGetInforomConfigurationChecksum_dlib(h.dev, &checksum)
@@ -521,7 +521,7 @@ func (h handle) DeviceGetInforomConfigurationChecksum() (uint, error) {
 	return uint(checksum), nil
 }
 
-func (h handle) DeviceGetInforomImageVersion() (string, error) {
+func (h GpuHandle) DeviceGetInforomImageVersion() (string, error) {
 	var version [szName]C.char
 
 	r := C.nvmlDeviceGetInforomImageVersion_dlib(h.dev, &version[0], szName)
@@ -533,7 +533,7 @@ func (h handle) DeviceGetInforomImageVersion() (string, error) {
 	return C.GoString(&version[0]), nil
 }
 
-func (h handle) DeviceGetInforomVersion(object InforomObject) (string, error) {
+func (h GpuHandle) DeviceGetInforomVersion(object InforomObject) (string, error) {
 	var version [szName]C.char
 
 	r := C.nvmlDeviceGetInforomVersion_dlib(h.dev, object.convert(), &version[0], szName)
@@ -545,7 +545,7 @@ func (h handle) DeviceGetInforomVersion(object InforomObject) (string, error) {
 	return C.GoString(&version[0]), nil
 }
 
-func (h handle) DeviceGetMaxClockInfo(clockType ClockType) (uint, error) {
+func (h GpuHandle) DeviceGetMaxClockInfo(clockType ClockType) (uint, error) {
 	var clockMHz C.uint
 
 	r := C.nvmlDeviceGetMaxClockInfo_dlib(h.dev, clockType.convert(), &clockMHz)
@@ -557,7 +557,7 @@ func (h handle) DeviceGetMaxClockInfo(clockType ClockType) (uint, error) {
 	return uint(clockMHz), nil
 }
 
-func (h handle) DeviceGetMaxPcieLinkGeneration() (uint, error) {
+func (h GpuHandle) DeviceGetMaxPcieLinkGeneration() (uint, error) {
 	var maxLinkGen C.uint
 
 	r := C.nvmlDeviceGetMaxPcieLinkGeneration_dlib(h.dev, &maxLinkGen)
@@ -569,7 +569,7 @@ func (h handle) DeviceGetMaxPcieLinkGeneration() (uint, error) {
 	return uint(maxLinkGen), nil
 }
 
-func (h handle) DeviceGetMaxPcieLinkWidth() (uint, error) {
+func (h GpuHandle) DeviceGetMaxPcieLinkWidth() (uint, error) {
 	var maxWidth C.uint
 
 	r := C.nvmlDeviceGetMaxPcieLinkWidth_dlib(h.dev, &maxWidth)
@@ -581,7 +581,7 @@ func (h handle) DeviceGetMaxPcieLinkWidth() (uint, error) {
 	return uint(maxWidth), nil
 }
 
-func (h handle) DeviceGetMemoryErrorCounter(mt MemoryErrorType, ec EccCounterType, loc MemoryLocation) (uint64, error) {
+func (h GpuHandle) DeviceGetMemoryErrorCounter(mt MemoryErrorType, ec EccCounterType, loc MemoryLocation) (uint64, error) {
 	var count C.ulonglong
 
 	r := C.nvmlDeviceGetMemoryErrorCounter_dlib(h.dev, mt.convert(), ec.convert(), loc.convert(), &count)
@@ -593,7 +593,7 @@ func (h handle) DeviceGetMemoryErrorCounter(mt MemoryErrorType, ec EccCounterTyp
 	return uint64(count), nil
 }
 
-func (h handle) DeviceGetMemoryInfo() (free uint64, used uint64, total uint64, err error) {
+func (h GpuHandle) DeviceGetMemoryInfo() (free uint64, used uint64, total uint64, err error) {
 	var info C.nvmlMemory_t
 
 	r := C.nvmlDeviceGetMemoryInfo_dlib(h.dev, &info)
@@ -605,7 +605,7 @@ func (h handle) DeviceGetMemoryInfo() (free uint64, used uint64, total uint64, e
 	return uint64(info.free), uint64(info.used), uint64(info.total), nil
 }
 
-func (h handle) DeviceGetMinorNumber() (uint, error) {
+func (h GpuHandle) DeviceGetMinorNumber() (uint, error) {
 	var minor C.uint
 
 	r := C.nvmlDeviceGetMinorNumber_dlib(h.dev, &minor)
@@ -617,7 +617,7 @@ func (h handle) DeviceGetMinorNumber() (uint, error) {
 	return uint(minor), nil
 }
 
-func (h handle) DeviceGetMultiGpuBoard() (uint, error) {
+func (h GpuHandle) DeviceGetMultiGpuBoard() (uint, error) {
 	var multi C.uint
 
 	r := C.nvmlDeviceGetMultiGpuBoard_dlib(h.dev, &multi)
@@ -629,7 +629,7 @@ func (h handle) DeviceGetMultiGpuBoard() (uint, error) {
 	return uint(multi), nil
 }
 
-func (h handle) DeviceGetName() (string, error) {
+func (h GpuHandle) DeviceGetName() (string, error) {
 	var name [szName]C.char
 
 	r := C.nvmlDeviceGetName_dlib(h.dev, &name[0], szName)
@@ -637,7 +637,7 @@ func (h handle) DeviceGetName() (string, error) {
 	return C.GoString(&name[0]), errorString(r)
 }
 
-func (h handle) DeviceGetPciInfo() (*PciInfo, error) {
+func (h GpuHandle) DeviceGetPciInfo() (*PciInfo, error) {
 	var info C.nvmlPciInfo_t
 
 	r := C.nvmlDeviceGetPciInfo_dlib(h.dev, &info)
@@ -656,7 +656,7 @@ func (h handle) DeviceGetPciInfo() (*PciInfo, error) {
 	}, nil
 }
 
-func (h handle) DeviceGetPcieReplayCounter() (uint, error) {
+func (h GpuHandle) DeviceGetPcieReplayCounter() (uint, error) {
 	var value C.uint
 
 	r := C.nvmlDeviceGetPcieReplayCounter_dlib(h.dev, &value)
@@ -668,7 +668,7 @@ func (h handle) DeviceGetPcieReplayCounter() (uint, error) {
 	return uint(value), nil
 }
 
-func (h handle) DeviceGetPcieThroughput(counterType PcieUtilCounter) (uint, error) {
+func (h GpuHandle) DeviceGetPcieThroughput(counterType PcieUtilCounter) (uint, error) {
 	var value C.uint
 
 	r := C.nvmlDeviceGetPcieThroughput_dlib(h.dev, counterType.convert(), &value)
@@ -680,7 +680,7 @@ func (h handle) DeviceGetPcieThroughput(counterType PcieUtilCounter) (uint, erro
 	return uint(value), nil
 }
 
-func (h handle) DeviceGetPerformanceState() (uint, error) {
+func (h GpuHandle) DeviceGetPerformanceState() (uint, error) {
 	var st C.nvmlPstates_t
 
 	r := C.nvmlDeviceGetPerformanceState_dlib(h.dev, &st)
@@ -692,7 +692,7 @@ func (h handle) DeviceGetPerformanceState() (uint, error) {
 	return uint(C.pstates_to_int(st)), nil
 }
 
-func (h handle) DeviceGetPersistenceMode() (bool, error) {
+func (h GpuHandle) DeviceGetPersistenceMode() (bool, error) {
 	var state C.nvmlEnableState_t
 
 	r := C.nvmlDeviceGetPersistenceMode_dlib(h.dev, &state)
@@ -704,7 +704,7 @@ func (h handle) DeviceGetPersistenceMode() (bool, error) {
 	return stateBool(state), nil
 }
 
-func (h handle) DeviceGetPowerManagementDefaultLimit() (uint, error) {
+func (h GpuHandle) DeviceGetPowerManagementDefaultLimit() (uint, error) {
 	var defLimit C.uint
 
 	r := C.nvmlDeviceGetPowerManagementDefaultLimit_dlib(h.dev, &defLimit)
@@ -716,7 +716,7 @@ func (h handle) DeviceGetPowerManagementDefaultLimit() (uint, error) {
 	return uint(defLimit), nil
 }
 
-func (h handle) DeviceGetPowerManagementLimit() (uint, error) {
+func (h GpuHandle) DeviceGetPowerManagementLimit() (uint, error) {
 	var limit C.uint
 
 	r := C.nvmlDeviceGetPowerManagementLimit_dlib(h.dev, &limit)
@@ -728,7 +728,7 @@ func (h handle) DeviceGetPowerManagementLimit() (uint, error) {
 	return uint(limit), nil
 }
 
-func (h handle) DeviceGetPowerManagementLimitConstraints() (min uint, max uint, err error) {
+func (h GpuHandle) DeviceGetPowerManagementLimitConstraints() (min uint, max uint, err error) {
 	var minLimit, maxLimit C.uint
 
 	r := C.nvmlDeviceGetPowerManagementLimitConstraints_dlib(h.dev, &minLimit, &maxLimit)
@@ -740,7 +740,7 @@ func (h handle) DeviceGetPowerManagementLimitConstraints() (min uint, max uint, 
 	return uint(minLimit), uint(maxLimit), nil
 }
 
-func (h handle) DeviceGetPowerManagementMode() (bool, error) {
+func (h GpuHandle) DeviceGetPowerManagementMode() (bool, error) {
 	var state C.nvmlEnableState_t
 
 	r := C.nvmlDeviceGetPowerManagementMode_dlib(h.dev, &state)
@@ -752,7 +752,7 @@ func (h handle) DeviceGetPowerManagementMode() (bool, error) {
 	return stateBool(state), nil
 }
 
-func (h handle) DeviceGetPowerState() (uint, error) {
+func (h GpuHandle) DeviceGetPowerState() (uint, error) {
 	var pstate C.nvmlPstates_t
 
 	r := C.nvmlDeviceGetPowerState_dlib(h.dev, &pstate)
@@ -764,7 +764,7 @@ func (h handle) DeviceGetPowerState() (uint, error) {
 	return uint(C.pstates_to_int(pstate)), nil
 }
 
-func (h handle) DeviceGetPowerUsage() (uint, error) {
+func (h GpuHandle) DeviceGetPowerUsage() (uint, error) {
 	var power C.uint
 
 	r := C.nvmlDeviceGetPowerUsage_dlib(h.dev, &power)
@@ -776,7 +776,7 @@ func (h handle) DeviceGetPowerUsage() (uint, error) {
 	return uint(power), nil
 }
 
-func (h handle) DeviceGetRetiredPages(cause PageRetirementCause) ([]uint64, error) {
+func (h GpuHandle) DeviceGetRetiredPages(cause PageRetirementCause) ([]uint64, error) {
 	var (
 		pageCount   C.uint
 		peekAddress C.ulonglong
@@ -807,7 +807,7 @@ func (h handle) DeviceGetRetiredPages(cause PageRetirementCause) ([]uint64, erro
 	return addrs, nil
 }
 
-func (h handle) DeviceGetRetiredPagesPendingStatus() (bool, error) {
+func (h GpuHandle) DeviceGetRetiredPagesPendingStatus() (bool, error) {
 	var state C.nvmlEnableState_t
 
 	r := C.nvmlDeviceGetRetiredPagesPendingStatus_dlib(h.dev, &state)
@@ -819,7 +819,7 @@ func (h handle) DeviceGetRetiredPagesPendingStatus() (bool, error) {
 	return stateBool(state), nil
 }
 
-func (h handle) DeviceGetSerial() (string, error) {
+func (h GpuHandle) DeviceGetSerial() (string, error) {
 	var serial [szUUID]C.char
 
 	r := C.nvmlDeviceGetSerial_dlib(h.dev, &serial[0], C.uint(szUUID))
@@ -827,7 +827,7 @@ func (h handle) DeviceGetSerial() (string, error) {
 	return C.GoString(&serial[0]), errorString(r)
 }
 
-func (h handle) DeviceGetSupportedClocksThrottleReasons() (uint64, error) {
+func (h GpuHandle) DeviceGetSupportedClocksThrottleReasons() (uint64, error) {
 	var reason C.ulonglong
 
 	r := C.nvmlDeviceGetSupportedClocksThrottleReasons_dlib(h.dev, &reason)
@@ -839,7 +839,7 @@ func (h handle) DeviceGetSupportedClocksThrottleReasons() (uint64, error) {
 	return uint64(reason), nil
 }
 
-func (h handle) DeviceGetSupportedGraphicsClocks(memoryClockMHz uint) ([]uint, error) {
+func (h GpuHandle) DeviceGetSupportedGraphicsClocks(memoryClockMHz uint) ([]uint, error) {
 	var (
 		count     C.uint
 		peekArray C.uint
@@ -867,7 +867,7 @@ func (h handle) DeviceGetSupportedGraphicsClocks(memoryClockMHz uint) ([]uint, e
 	return clocks, nil
 }
 
-func (h handle) DeviceGetSupportedMemoryClocks() ([]uint, error) {
+func (h GpuHandle) DeviceGetSupportedMemoryClocks() ([]uint, error) {
 	var (
 		count     C.uint
 		peekArray C.uint
@@ -900,7 +900,7 @@ func (h handle) DeviceGetSupportedMemoryClocks() ([]uint, error) {
 	return clocks, nil
 }
 
-func (h handle) DeviceGetTemperature() (uint, error) {
+func (h GpuHandle) DeviceGetTemperature() (uint, error) {
 	var temp C.uint
 
 	r := C.nvmlDeviceGetTemperature_dlib(h.dev, C.NVML_TEMPERATURE_GPU, &temp)
@@ -908,7 +908,7 @@ func (h handle) DeviceGetTemperature() (uint, error) {
 	return uint(temp), errorString(r)
 }
 
-func (h handle) DeviceGetTemperatureThreshold(threshold TemperatureThresholds) (uint, error) {
+func (h GpuHandle) DeviceGetTemperatureThreshold(threshold TemperatureThresholds) (uint, error) {
 	var temp C.uint
 
 	r := C.nvmlDeviceGetTemperatureThreshold_dlib(h.dev, threshold.convert(), &temp)
@@ -916,7 +916,7 @@ func (h handle) DeviceGetTemperatureThreshold(threshold TemperatureThresholds) (
 	return uint(temp), errorString(r)
 }
 
-func DeviceGetTopologyCommonAncestor(h1, h2 handle) (GpuTopologyLevel, error) {
+func DeviceGetTopologyCommonAncestor(h1, h2 GpuHandle) (GpuTopologyLevel, error) {
 	var ancestor C.nvmlGpuTopologyLevel_t
 
 	r := C.nvmlDeviceGetTopologyCommonAncestor_dlib(h1.dev, h2.dev, &ancestor)
@@ -924,10 +924,10 @@ func DeviceGetTopologyCommonAncestor(h1, h2 handle) (GpuTopologyLevel, error) {
 	return GpuTopologyLevel(C.gpuTopologyLevel_to_int(ancestor)), errorString(r)
 }
 
-func (h handle) DeviceGetTopologyNearestGpus(level GpuTopologyLevel) ([]handle, error) {
+func (h GpuHandle) DeviceGetTopologyNearestGpus(level GpuTopologyLevel) ([]GpuHandle, error) {
 	var (
 		count C.uint
-		devs  []handle
+		devs  []GpuHandle
 	)
 
 	d := make([]C.nvmlDevice_t, maxDevices)
@@ -940,13 +940,13 @@ func (h handle) DeviceGetTopologyNearestGpus(level GpuTopologyLevel) ([]handle, 
 	}
 
 	for i := 0; i < int(count); i++ {
-		devs = append(devs, handle{d[i]})
+		devs = append(devs, GpuHandle{d[i]})
 	}
 
 	return devs, nil
 }
 
-func (h handle) DeviceGetTotalEccErrors(mt MemoryErrorType, et EccCounterType) (uint64, error) {
+func (h GpuHandle) DeviceGetTotalEccErrors(mt MemoryErrorType, et EccCounterType) (uint64, error) {
 	var eccCount C.ulonglong
 
 	r := C.nvmlDeviceGetTotalEccErrors_dlib(h.dev, mt.convert(), et.convert(), &eccCount)
@@ -958,7 +958,7 @@ func (h handle) DeviceGetTotalEccErrors(mt MemoryErrorType, et EccCounterType) (
 	return uint64(eccCount), nil
 }
 
-func (h handle) DeviceGetUUID() (string, error) {
+func (h GpuHandle) DeviceGetUUID() (string, error) {
 	var uuid [szUUID]C.char
 
 	r := C.nvmlDeviceGetUUID_dlib(h.dev, &uuid[0], C.uint(szUUID))
@@ -970,7 +970,7 @@ func (h handle) DeviceGetUUID() (string, error) {
 	return C.GoString(&uuid[0]), nil
 }
 
-func (h handle) DeviceGetUtilizationRates() (*Utilization, error) {
+func (h GpuHandle) DeviceGetUtilizationRates() (*Utilization, error) {
 	var util C.nvmlUtilization_t
 
 	r := C.nvmlDeviceGetUtilizationRates_dlib(h.dev, &util)
@@ -985,7 +985,7 @@ func (h handle) DeviceGetUtilizationRates() (*Utilization, error) {
 	}, nil
 }
 
-func (h handle) DeviceGetVbiosVersion() (string, error) {
+func (h GpuHandle) DeviceGetVbiosVersion() (string, error) {
 	var ver [szName]C.char
 
 	r := C.nvmlDeviceGetVbiosVersion_dlib(h.dev, &ver[0], C.uint(szName))
@@ -997,7 +997,7 @@ func (h handle) DeviceGetVbiosVersion() (string, error) {
 	return C.GoString(&ver[0]), nil
 }
 
-func (h handle) DeviceGetViolationStatus(policy PerfPolicy) (*ViolationTime, error) {
+func (h GpuHandle) DeviceGetViolationStatus(policy PerfPolicy) (*ViolationTime, error) {
 	var d C.nvmlViolationTime_t
 
 	r := C.nvmlDeviceGetViolationStatus_dlib(h.dev, policy.convert(), &d)
@@ -1012,7 +1012,7 @@ func (h handle) DeviceGetViolationStatus(policy PerfPolicy) (*ViolationTime, err
 	}, nil
 }
 
-func DeviceOnSameBoard(h1, h2 handle) (bool, error) {
+func DeviceOnSameBoard(h1, h2 GpuHandle) (bool, error) {
 	var d C.int
 
 	r := C.nvmlDeviceOnSameBoard_dlib(h1.dev, h2.dev, &d)
@@ -1030,13 +1030,13 @@ func DeviceOnSameBoard(h1, h2 handle) (bool, error) {
 	return false, nil
 }
 
-func (h handle) DeviceResetApplicationsClocks() error {
+func (h GpuHandle) DeviceResetApplicationsClocks() error {
 	r := C.nvmlDeviceResetApplicationsClocks_dlib(h.dev)
 
 	return errorString(r)
 }
 
-func (h handle) DeviceSetAutoBoostedClocksEnabled() (bool, error) {
+func (h GpuHandle) DeviceSetAutoBoostedClocksEnabled() (bool, error) {
 	var state C.nvmlEnableState_t
 
 	r := C.nvmlDeviceSetAutoBoostedClocksEnabled_dlib(h.dev, state)
@@ -1048,13 +1048,13 @@ func (h handle) DeviceSetAutoBoostedClocksEnabled() (bool, error) {
 	return stateBool(state), nil
 }
 
-func (h handle) DeviceSetCpuAffinity() error {
+func (h GpuHandle) DeviceSetCpuAffinity() error {
 	r := C.nvmlDeviceSetCpuAffinity_dlib(h.dev)
 
 	return errorString(r)
 }
 
-func (h handle) DeviceSetDefaultAutoBoostedClocksEnabled(enabled bool) error {
+func (h GpuHandle) DeviceSetDefaultAutoBoostedClocksEnabled(enabled bool) error {
 	var flags C.uint
 
 	r := C.nvmlDeviceSetDefaultAutoBoostedClocksEnabled_dlib(h.dev, boolState(enabled), flags)
@@ -1062,17 +1062,17 @@ func (h handle) DeviceSetDefaultAutoBoostedClocksEnabled(enabled bool) error {
 	return errorString(r)
 }
 
-func (h handle) DeviceValidateInforom() error {
+func (h GpuHandle) DeviceValidateInforom() error {
 	r := C.nvmlDeviceValidateInforom_dlib(h.dev)
 
 	return errorString(r)
 }
 
-func SystemGetTopologyGpuSet(cpu int) ([]handle, error) {
+func SystemGetTopologyGpuSet(cpu int) ([]GpuHandle, error) {
 	var (
 		count C.uint
 		d     []C.nvmlDevice_t
-		devs  []handle
+		devs  []GpuHandle
 	)
 
 	count = C.uint(1)
@@ -1094,7 +1094,7 @@ func SystemGetTopologyGpuSet(cpu int) ([]handle, error) {
 	}
 
 	for i := 0; i < int(count); i++ {
-		devs = append(devs, handle{d[i]})
+		devs = append(devs, GpuHandle{d[i]})
 	}
 
 	return devs, nil
@@ -1125,7 +1125,7 @@ func SystemGetHicVersion() ([]*HwbcEntry, error) {
 	return entries, nil
 }
 
-func (h handle) DeviceClearEccErrorCounts(counterType EccCounterType) error {
+func (h GpuHandle) DeviceClearEccErrorCounts(counterType EccCounterType) error {
 	r := C.nvmlDeviceClearEccErrorCounts_dlib(h.dev, counterType.convert())
 
 	if r != OP_SUCCESS {
@@ -1135,7 +1135,7 @@ func (h handle) DeviceClearEccErrorCounts(counterType EccCounterType) error {
 	return nil
 }
 
-func (h handle) DeviceSetAPIRestriction(api RestrictedAPI, isEnabled bool) error {
+func (h GpuHandle) DeviceSetAPIRestriction(api RestrictedAPI, isEnabled bool) error {
 	r := C.nvmlDeviceSetAPIRestriction_dlib(h.dev, api.convert(), boolState(isEnabled))
 
 	if r != OP_SUCCESS {
@@ -1145,7 +1145,7 @@ func (h handle) DeviceSetAPIRestriction(api RestrictedAPI, isEnabled bool) error
 	return nil
 }
 
-func (h handle) DeviceSetApplicationsClocks(memClocksMHz, clocksMHz uint) error {
+func (h GpuHandle) DeviceSetApplicationsClocks(memClocksMHz, clocksMHz uint) error {
 	r := C.nvmlDeviceSetApplicationsClocks_dlib(h.dev, C.uint(memClocksMHz), C.uint(clocksMHz))
 
 	if r != OP_SUCCESS {
@@ -1155,7 +1155,7 @@ func (h handle) DeviceSetApplicationsClocks(memClocksMHz, clocksMHz uint) error 
 	return nil
 }
 
-func (h handle) DeviceSetComputeMode(mode ComputeMode) error {
+func (h GpuHandle) DeviceSetComputeMode(mode ComputeMode) error {
 	r := C.nvmlDeviceSetComputeMode_dlib(h.dev, mode.convert())
 
 	if r != OP_SUCCESS {
@@ -1165,7 +1165,7 @@ func (h handle) DeviceSetComputeMode(mode ComputeMode) error {
 	return nil
 }
 
-func (h handle) DeviceSetEccMode(isEnabled bool) error {
+func (h GpuHandle) DeviceSetEccMode(isEnabled bool) error {
 	r := C.nvmlDeviceSetEccMode_dlib(h.dev, boolState(isEnabled))
 
 	if r != OP_SUCCESS {
@@ -1175,7 +1175,7 @@ func (h handle) DeviceSetEccMode(isEnabled bool) error {
 	return nil
 }
 
-func (h handle) DeviceSetGpuOperationMode(mode GpuOperationMode) error {
+func (h GpuHandle) DeviceSetGpuOperationMode(mode GpuOperationMode) error {
 	r := C.nvmlDeviceSetGpuOperationMode_dlib(h.dev, mode.convert())
 
 	if r != OP_SUCCESS {
@@ -1185,7 +1185,7 @@ func (h handle) DeviceSetGpuOperationMode(mode GpuOperationMode) error {
 	return nil
 }
 
-func (h handle) DeviceSetPersistenceMode(isEnabled bool) error {
+func (h GpuHandle) DeviceSetPersistenceMode(isEnabled bool) error {
 	r := C.nvmlDeviceSetPersistenceMode_dlib(h.dev, boolState(isEnabled))
 
 	if r != OP_SUCCESS {
@@ -1195,7 +1195,7 @@ func (h handle) DeviceSetPersistenceMode(isEnabled bool) error {
 	return nil
 }
 
-func (h handle) DeviceSetPowerManagementLimit(limit uint) error {
+func (h GpuHandle) DeviceSetPowerManagementLimit(limit uint) error {
 	r := C.nvmlDeviceSetPowerManagementLimit_dlib(h.dev, C.uint(limit))
 
 	if r != OP_SUCCESS {
@@ -1205,14 +1205,14 @@ func (h handle) DeviceSetPowerManagementLimit(limit uint) error {
 	return nil
 }
 
-func (h handle) DeviceGetAverageGPUUsage(since time.Duration) (uint, error) {
+func (h GpuHandle) DeviceGetAverageGPUUsage(since time.Duration) (uint, error) {
 	lastTs := C.ulonglong(time.Now().Add(-1*since).UnixNano() / 1000)
 	var n C.uint
 	r := C.__nvmlDeviceGetAverageUsage(h.dev, C.NVML_GPU_UTILIZATION_SAMPLES, lastTs, &n)
 	return uint(n), errorString(r)
 }
 
-func (h handle) DeviceGetProcessUtilization(maxProcess int, since time.Duration) ([]*ProcessUtilizationSample, error) {
+func (h GpuHandle) DeviceGetProcessUtilization(maxProcess int, since time.Duration) ([]*ProcessUtilizationSample, error) {
 	lastTs := C.ulonglong(time.Now().Add(-1*since).UnixNano() / 1000)
 	var (
 		count   C.uint
@@ -1242,7 +1242,7 @@ func (h handle) DeviceGetProcessUtilization(maxProcess int, since time.Duration)
 	return samples, nil
 }
 
-func (h handle) DeviceGetSupportedEventTypes() ([]EventType, error) {
+func (h GpuHandle) DeviceGetSupportedEventTypes() ([]EventType, error) {
 	var supportedType C.ulonglong
 	r := C.nvmlDeviceGetSupportedEventTypes_dlib(h.dev, &supportedType)
 	if r != OP_SUCCESS {
@@ -1252,7 +1252,7 @@ func (h handle) DeviceGetSupportedEventTypes() ([]EventType, error) {
 	return eventTypes(supportedType), nil
 }
 
-func (h handle) DeviceRegisterEvents(evtType EventType, set EventSet) error {
+func (h GpuHandle) DeviceRegisterEvents(evtType EventType, set EventSet) error {
 	r := C.nvmlDeviceRegisterEvents_dlib(h.dev, C.ulonglong(evtType), set.set)
 	if r != OP_SUCCESS {
 		return errorString(r)
@@ -1296,7 +1296,7 @@ func EventSetWait(set EventSet, timeoutMS int) (*EventData, error) {
 	}
 
 	return &EventData{
-		Device: handle{data.device},
+		Device: GpuHandle{data.device},
 		Data:   uint64(data.eventData),
 		Types:  eventTypes(data.eventType),
 	}, nil
